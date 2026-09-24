@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motion Designer Portfolio | 动效设计师作品集</title>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#C3B0AA',
+              secondary: '#D4BFB4',
+              light: '#F8F5F4',
+              dark: '#1A1818',
+              muted: '#7A7573'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #ffffff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D4BFB4;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #C3B0AA;
+    }
+    /* Requirement: Inter Font with 60px Bold Titles, 48px Regular Headers */
+    .title-60-bold {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(32px, 4.5vw, 60px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .text-48-regular {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(24px, 3.2vw, 48px);
+      font-weight: 400;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+    /* 滚动双向动画：80px位移，320ms ease */
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(80px);
+      transition: opacity 320ms ease, transform 320ms ease;
+      will-change: opacity, transform;
+    }
+    .reveal-on-scroll.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Delicate Glass effect */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 191, 180, 0.3);
+    }
+  </style>
+</head>
+<body class="bg-[#FFFFFF] text-[#1A1818] font-sans antialiased selection:bg-[#D4BFB4] selection:text-white">
+  <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300 glass-panel border-b border-[#D4BFB4]/20">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <a href="#" class="text-xl font-bold tracking-tight text-[#1A1818] flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full bg-[#C3B0AA] inline-block animate-pulse"></span>
+        <span class="tracking-widest uppercase text-sm">Portfolio</span>
+      </a>
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-[#7A7573]">
+        <a href="#hero" class="hover:text-[#C3B0AA] transition-colors">首页</a>
+        <a href="#about" class="hover:text-[#C3B0AA] transition-colors">关于我</a>
+        <a href="#showcase" class="hover:text-[#C3B0AA] transition-colors">作品展示</a>
+        <a href="#motion-reel" class="hover:text-[#C3B0AA] transition-colors">动效片段</a>
+        <a href="#contact" class="hover:text-[#C3B0AA] transition-colors">联系方式</a>
+      </nav>
+      <a href="#contact" class="px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[#1A1818] border border-[#C3B0AA] rounded-full hover:bg-[#C3B0AA] hover:text-white transition-all duration-300">
+        Get In Touch
+      </a>
+    </div>
+  </header>
+  <!-- Hero 已优化最小高度自适应 + 文案桌面端下移500px -->
+  <section id="hero" class="relative w-full min-h-[420px] h-screen overflow-hidden flex items-center justify-center bg-black">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <video id="bgVideo" class="absolute inset-0 w-full h-full object-contain md:object-cover pointer-events-none" preload="metadata" muted loop playsinline>
+        <source src="head_turn.mp4" type="video/mp4">
+      </video>
+      <canvas id="fallbackCanvas" class="absolute inset-0 w-full h-full object-contain md:object-cover hidden pointer-events-none"></canvas>
+      <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-black/40 pointer-events-none"></div>
+      <div id="tip" class="absolute top-16 md:top-24 left-6 md:left-12 z-20 px-4 py-2 text-xs rounded-full glass-panel text-[#1A1818] shadow-sm flex items-center gap-2 border border-[#D4BFB4]/40">
+        <span id="tipStatusDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+        <span id="tipText">视频加载中...</span>
+      </div>
+      <!-- 桌面端整体下移500px，移动端不偏移 -->
+      <div class="relative z-10 max-w-7xl mx-auto px-6 w-full mt-[auto] md:mt-[500px] mb-10 md:mb-20 pointer-events-none">
+        <div class="max-w-3xl space-y-2 md:space-y-4">
+          <div class="inline-block px-3 py-1 text-xs font-semibold tracking-widest text-[#1A1818] uppercase bg-[#D4BFB4]/40 backdrop-blur-md border border-[#C3B0AA]/30 rounded-full">
+            Senior Motion Designer
+          </div>
+          <h1 class="title-60-bold text-slate-900 drop-shadow-sm">
+            系统级 UI/UX 交互动效 <br />
+            <span class="text-[#C3B0AA] font-normal">& 动态视觉专家</span>
+          </h1>
+          <p class="text-base md:text-lg text-slate-700 max-w-xl font-light">
+            8 年动效设计经验 · OPPO Color OS 研发团队背景
+          </p>
+          <div class="pt-2 md:pt-4 flex items-center gap-3 text-xs text-slate-500 font-mono">
+            <span class="w-2 h-2 rounded-full bg-[#C3B0AA]"></span>
+            <span>拖拽 / 左右滑动鼠标控制背景视角</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="about" class="py-28 px-6 max-w-7xl mx-auto">
+    <div class="reveal-on-scroll mb-20 border-b border-[#D4BFB4]/30 pb-8">
+      <span class="text-xs font-mono uppercase tracking-widest text-[#C3B0AA]">01 / Profile</span>
+      <h2 class="text-48-regular text-[#1A1818] mt-2">个人简介</h2>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <div class="reveal-on-scroll lg:col-span-5 space-y-6">
+        <div class="p-8 rounded-3xl bg-[#F8F5F4] border border-[#D4BFB4]/40 relative overflow-hidden group">
+          <div class="absolute -top-10 -right-10 w-40 h-40 bg-[#D4BFB4]/20 rounded-full blur-2xl group-hover:bg-[#C3B0AA]/30 transition-all duration-500"></div>
+          <div class="text-5xl font-bold text-[#C3B0AA] mb-4">8+</div>
+          <h3 class="text-xl font-semibold text-[#1A1818] mb-2">年动效设计经验</h3>
+          <p class="text-sm text-[#7A7573] leading-relaxed">
+            曾任职于 <span class="text-[#1A1818] font-medium">OPPO Color OS 研发团队</span>，深度参与系统级全局动效架构与核心交互设计，具备极强的跨端技术理解与设计还原力。
+          </p>
+          <div class="mt-8 pt-6 border-t border-[#D4BFB4]/30 flex flex-wrap gap-2">
+            <span class="px-3 py-1 text-xs rounded-full bg-white text-[#1A1818] border border-[#D4BFB4]/40">Color OS</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-white text-[#1A1818] border border-[#D4BFB4]/40">System UI</span>
+            <span class="px-3 py-1 text-xs rounded-full bg-white text-[#1A1818] border border-[#D4BFB4]/40">Micro-Interactions</span>
+          </div>
+        </div>
+      </div>
+      <div class="lg:col-span-7 space-y-6">
+        <div class="reveal-on-scroll p-8 rounded-3xl border border-[#D4BFB4]/30 hover:border-[#C3B0AA] transition-all duration-300 bg-white shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-[#F8F5F4] text-[#C3B0AA] flex items-center justify-center font-bold text-sm">01</div>
+            <h4 class="text-xl font-bold text-[#1A1818]">【方案设计】</h4>
+          </div>
+          <p class="text-base text-[#7A7573] leading-relaxed">
+            具备系统级 UI/UX 交互动效与动态视觉设计能力，主导从方案设计、原型验证到开发落地完整链路；以用户体验与产品逻辑定义动效节奏、状态反馈体系。
+          </p>
+        </div>
+        <div class="reveal-on-scroll p-8 rounded-3xl border border-[#D4BFB4]/30 hover:border-[#C3B0AA] transition-all duration-300 bg-white shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-[#F8F5F4] text-[#C3B0AA] flex items-center justify-center font-bold text-sm">02</div>
+            <h4 class="text-xl font-bold text-[#1A1818]">【跨团队落地协同】</h4>
+          </div>
+          <p class="text-base text-[#7A7573] leading-relaxed">
+            拥有大型系统业务动效落地经验，熟悉移动端与 Web 端动效技术边界，高效联动产品、UI与开发，保障动效还原与稳定交付。
+          </p>
+        </div>
+        <div class="reveal-on-scroll p-8 rounded-3xl border border-[#D4BFB4]/30 hover:border-[#C3B0AA] transition-all duration-300 bg-white shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-[#F8F5F4] text-[#C3B0AA] flex items-center justify-center font-bold text-sm">03</div>
+            <h4 class="text-xl font-bold text-[#1A1818]">【设计工具与工作流】</h4>
+          </div>
+          <p class="text-base text-[#7A7573] leading-relaxed">
+            熟练使用 After Effects、Figma、ProtoPie，搭建 AI 辅助设计工作流，可独立完成交互原型动效与 MG 动态视觉制作。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ========== 动效作品展示｜4个作品位 ========== -->
+  <section id="showcase" class="py-28 px-6 bg-[#F8F5F4]/50 border-t border-b border-[#D4BFB4]/20">
+    <div class="max-w-7xl mx-auto">
+      <div class="reveal-on-scroll mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#D4BFB4]/30 pb-8">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-[#C3B0AA]">02 / Selected Works</span>
+          <h2 class="text-48-regular text-[#1A1818] mt-2">动效作品展示</h2>
+        </div>
+        <p class="text-sm text-[#7A7573] max-w-md">
+          精选系统级交互动效、物理反馈、多态组件与品牌动态视觉案例。
+        </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <!-- 作品位1 板块一：视频 Movie+｜3D 卡片矩阵｜转场光效｜光影 Loading -->
+        <div class="reveal-on-scroll group">
+          <div class="rounded-3xl overflow-hidden border border-[#D4BFB4]/40 bg-black aspect-video relative shadow-lg">
+            <div class="absolute inset-0 bg-gradient-to-br from-[#1A1818] via-[#2A2625] to-[#1A1818] flex items-center justify-center">
+              <canvas id="showcaseCanvas1" class="w-full h-full object-cover"></canvas>
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
+              <span class="px-3 py-1 rounded-full text-xs font-mono bg-black/60 text-white backdrop-blur-md">Movie+ 3D Card Matrix</span>
+              <span class="text-xs text-[#D4BFB4] font-mono">3D Light Transition · Loading</span>
+            </div>
+          </div>
+          <div class="mt-6 space-y-4">
+            <div class="inline-block px-3 py-1 text-xs font-semibold text-[#C3B0AA] bg-[#C3B0AA]/10 rounded-full">
+              System Interaction UI
+            </div>
+            <h3 class="text-2xl font-bold text-[#1A1818]">视频 Movie+</h3>
+            <p class="text-sm text-[#7A7573] leading-relaxed">
+              实现3D卡片矩阵排布效果，定制页面转场光效与光影Loading动画，构建沉浸式视频浏览动态体验。
+            </p>
+            <div class="flex flex-wrap gap-2 text-xs font-mono text-[#7A7573]">
+              <span>After Effects</span>
+              <span>•</span>
+              <span>ProtoPie</span>
+              <span>•</span>
+              <span>Lottie</span>
+            </div>
+          </div>
+        </div>
+        <!-- 作品位2 板块二：光学玻璃组件｜光学玻璃按钮｜融球裂变动效｜动画时序曲线统一｜控件参数拆解对齐 -->
+        <div class="reveal-on-scroll group">
+          <div class="rounded-3xl overflow-hidden border border-[#D4BFB4]/40 bg-black aspect-video relative shadow-lg">
+            <div class="absolute inset-0 bg-gradient-to-br from-[#1A1818] via-[#2A2625] to-[#1A1818] flex items-center justify-center">
+              <canvas id="showcaseCanvas2" class="w-full h-full object-cover"></canvas>
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
+              <span class="px-3 py-1 rounded-full text-xs font-mono bg-black/60 text-white backdrop-blur-md">Optical Glass Component</span>
+              <span class="text-xs text-[#D4BFB4] font-mono">Morph & Split Animation</span>
+            </div>
+          </div>
+          <div class="mt-6 space-y-4">
+            <div class="inline-block px-3 py-1 text-xs font-semibold text-[#C3B0AA] bg-[#C3B0AA]/10 rounded-full">
+              Micro-Interactions
+            </div>
+            <h3 class="text-2xl font-bold text-[#1A1818]">光学玻璃组件</h3>
+            <p class="text-sm text-[#7A7573] leading-relaxed">
+              设计光学玻璃按钮、融球裂变动效，统一全组件动画时序与贝塞尔曲线，完成控件动效参数拆解与开发对齐。
+            </p>
+            <div class="flex flex-wrap gap-2 text-xs font-mono text-[#7A7573]">
+              <span>Figma</span>
+              <span>•</span>
+              <span>After Effects</span>
+              <span>•</span>
+              <span>Principle</span>
+            </div>
+          </div>
+        </div>
+        <!-- 作品位3 板块三：OS 卡片小组件｜UX 交互梳理｜动效设计｜落地还原 -->
+        <div class="reveal-on-scroll group">
+          <div class="rounded-3xl overflow-hidden border border-[#D4BFB4]/40 bg-black aspect-video relative shadow-lg">
+            <div class="absolute inset-0 bg-gradient-to-br from-[#1A1818] via-[#2A2625] to-[#1A1818] flex items-center justify-center">
+              <canvas id="showcaseCanvas3" class="w-full h-full object-cover"></canvas>
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
+              <span class="px-3 py-1 rounded-full text-xs font-mono bg-black/60 text-white backdrop-blur-md">OS Card Widget</span>
+              <span class="text-xs text-[#D4BFB4] font-mono">UX Design & Implementation</span>
+            </div>
+          </div>
+          <div class="mt-6 space-y-4">
+            <div class="inline-block px-3 py-1 text-xs font-semibold text-[#C3B0AA] bg-[#C3B0AA]/10 rounded-full">
+              State Feedback
+            </div>
+            <h3 class="text-2xl font-bold text-[#1A1818]">OS 卡片小组件</h3>
+            <p class="text-sm text-[#7A7573] leading-relaxed">
+              完成小组件全流程UX交互梳理、整套动效方案设计，输出可落地的动效规范，协同开发完成效果还原验收。
+            </p>
+            <div class="flex flex-wrap gap-2 text-xs font-mono text-[#7A7573]">
+              <span>Lottie</span>
+              <span>•</span>
+              <span>ProtoPie</span>
+              <span>•</span>
+              <span>Design System</span>
+            </div>
+          </div>
+        </div>
+        <!-- 作品位4 板块四：主题商店｜UX 交互梳理｜动效设计｜跨机型适配 & 开发联调｜JSON 可配置静态模板 -->
+        <div class="reveal-on-scroll group">
+          <div class="rounded-3xl overflow-hidden border border-[#D4BFB4]/40 bg-black aspect-video relative shadow-lg">
+            <div class="absolute inset-0 bg-gradient-to-br from-[#1A1818] via-[#2A2625] to-[#1A1818] flex items-center justify-center">
+              <canvas id="showcaseCanvas4" class="w-full h-full object-cover"></canvas>
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
+              <span class="px-3 py-1 rounded-full text-xs font-mono bg-black/60 text-white backdrop-blur-md">Theme Store System</span>
+              <span class="text-xs text-[#D4BFB4] font-mono">JSON Configurable Template</span>
+            </div>
+          </div>
+          <div class="mt-6 space-y-4">
+            <div class="inline-block px-3 py-1 text-xs font-semibold text-[#C3B0AA] bg-[#C3B0AA]/10 rounded-full">
+              Brand Motion
+            </div>
+            <h3 class="text-2xl font-bold text-[#1A1818]">主题商店</h3>
+            <p class="text-sm text-[#7A7573] leading-relaxed">
+              完成产品UX交互梳理与全套动效设计，跟进多机型适配与开发联调，输出JSON可配置的静态模板方案。
+            </p>
+            <div class="flex flex-wrap gap-2 text-xs font-mono text-[#7A7573]">
+              <span>After Effects</span>
+              <span>•</span>
+              <span>C4D</span>
+              <span>•</span>
+              <span>Motion Graphics</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 新增：MG / 其它｜2个作品位 ========== -->
+      <div class="mt-24 md:mt-32">
+        <div class="reveal-on-scroll mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#D4BFB4]/30 pb-8">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-[#C3B0AA]">05 / Motion Graphics & Other Works</span>
+            <h2 class="text-48-regular text-[#1A1818] mt-2">MG / 其它</h2>
+          </div>
+          <p class="text-sm text-[#7A7573] max-w-md">
+            品牌动态图形、视觉识别动效、信息可视化与实验短片，补充展示综合动效设计能力与更完整的创作维度。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <!-- 作品位5：品牌动态图形 -->
+          <div class="reveal-on-scroll group">
+            <div class="rounded-3xl overflow-hidden border border-[#D4BFB4]/40 bg-black aspect-video relative shadow-lg">
+              <div class="absolute inset-0 bg-gradient-to-br from-[#1A1818] via-[#2A2625] to-[#1A1818] flex items-center justify-center">
+                <canvas id="showcaseCanvas5" class="w-full h-full object-cover"></canvas>
+              </div>
+              <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
+                <span class="px-3 py-1 rounded-full text-xs font-mono bg-black/60 text-white backdrop-blur-md">Brand Motion Graphics</span>
+                <span class="text-xs text-[#D4BFB4] font-mono">Logo Animation · Brand System</span>
+              </div>
+            </div>
+            <div class="mt-6 space-y-4">
+              <div class="inline-block px-3 py-1 text-xs font-semibold text-[#C3B0AA] bg-[#C3B0AA]/10 rounded-full">
+                Brand Motion
+              </div>
+              <h3 class="text-2xl font-bold text-[#1A1818]">品牌动态图形</h3>
+              <p class="text-sm text-[#7A7573] leading-relaxed">
+                将品牌识别系统动态化，通过 Logo 动效、图形语言与节奏变化强化品牌记忆点，形成统一的动态视觉表达。
+              </p>
+              <div class="flex flex-wrap gap-2 text-xs font-mono text-[#7A7573]">
+                <span>After Effects</span>
+                <span>•</span>
+                <span>C4D</span>
+                <span>•</span>
+                <span>Motion Graphics</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 作品位6：实验动效短片 -->
+          <div class="reveal-on-scroll group">
+            <div class="rounded-3xl overflow-hidden border border-[#D4BFB4]/40 bg-black aspect-video relative shadow-lg">
+              <div class="absolute inset-0 bg-gradient-to-br from-[#1A1818] via-[#2A2625] to-[#1A1818] flex items-center justify-center">
+                <canvas id="showcaseCanvas6" class="w-full h-full object-cover"></canvas>
+              </div>
+              <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
+                <span class="px-3 py-1 rounded-full text-xs font-mono bg-black/60 text-white backdrop-blur-md">Experimental Motion Short</span>
+                <span class="text-xs text-[#D4BFB4] font-mono">Graphic Rhythm · Visual Experiment</span>
+              </div>
+            </div>
+            <div class="mt-6 space-y-4">
+              <div class="inline-block px-3 py-1 text-xs font-semibold text-[#C3B0AA] bg-[#C3B0AA]/10 rounded-full">
+                Visual Experiment
+              </div>
+              <h3 class="text-2xl font-bold text-[#1A1818]">实验动效短片</h3>
+              <p class="text-sm text-[#7A7573] leading-relaxed">
+                以图形、节奏、材质与镜头运动做实验，探索动态视觉的边界，输出具有个人风格与探索性的动效短片作品。
+              </p>
+              <div class="flex flex-wrap gap-2 text-xs font-mono text-[#7A7573]">
+                <span>After Effects</span>
+                <span>•</span>
+                <span>Touch Designer</span>
+                <span>•</span>
+                <span>Experimental Motion</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ========== 新增板块：动效片段展示 ========== -->
+  <section id="motion-reel" class="py-28 px-6 bg-white border-t border-[#D4BFB4]/20">
+    <div class="max-w-7xl mx-auto">
+      <div class="reveal-on-scroll mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#D4BFB4]/30 pb-8">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-[#C3B0AA]">03 / Motion Reel</span>
+          <h2 class="text-48-regular text-[#1A1818] mt-2">动效片段展示</h2>
+        </div>
+        <p class="text-sm text-[#7A7573] max-w-md">
+          短片合集、动态视觉实验与交互片段预览，适合放置 Reel、Demo 视频或横向动态展示。
+        </p>
+      </div>
+      <div class="reveal-on-scroll rounded-3xl overflow-hidden border border-[#D4BFB4]/40 bg-black aspect-video relative shadow-lg group">
+        <div class="absolute inset-0 bg-gradient-to-br from-[#1A1818] via-[#2A2625] to-[#1A1818] flex items-center justify-center">
+          <canvas id="reelCanvas" class="w-full h-full object-cover"></canvas>
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <button class="pointer-events-auto w-20 h-20 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-[#C3B0AA] group-hover:border-[#C3B0AA] transition-all duration-300">
+            <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+        </div>
+        <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
+          <span class="px-3 py-1 rounded-full text-xs font-mono bg-black/60 text-white backdrop-blur-md">Motion Reel 2026</span>
+          <span class="text-xs text-[#D4BFB4] font-mono">Highlight Demo · 02:48</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+        <div class="reveal-on-scroll p-6 rounded-3xl border border-[#D4BFB4]/30 bg-[#F8F5F4]/60 hover:border-[#C3B0AA] transition-all duration-300">
+          <div class="text-xs font-mono text-[#C3B0AA] mb-2">Reel 01</div>
+          <h4 class="text-lg font-bold text-[#1A1818] mb-2">系统交互动效集锦</h4>
+          <p class="text-sm text-[#7A7573]">手势、转场、状态反馈与组件动效合集。</p>
+        </div>
+        <div class="reveal-on-scroll p-6 rounded-3xl border border-[#D4BFB4]/30 bg-[#F8F5F4]/60 hover:border-[#C3B0AA] transition-all duration-300">
+          <div class="text-xs font-mono text-[#C3B0AA] mb-2">Reel 02</div>
+          <h4 class="text-lg font-bold text-[#1A1818] mb-2">品牌动态视觉实验</h4>
+          <p class="text-sm text-[#7A7573]">图形、光影与品牌色构成的动态视觉片段。</p>
+        </div>
+        <div class="reveal-on-scroll p-6 rounded-3xl border border-[#D4BFB4]/30 bg-[#F8F5F4]/60 hover:border-[#C3B0AA] transition-all duration-300">
+          <div class="text-xs font-mono text-[#C3B0AA] mb-2">Reel 03</div>
+          <h4 class="text-lg font-bold text-[#1A1818] mb-2">Micro Interaction Demo</h4>
+          <p class="text-sm text-[#7A7573]">按钮、卡片、加载与控件微交互演示。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer id="contact" class="py-24 px-6 bg-white border-t border-[#D4BFB4]/30">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
+      <div class="reveal-on-scroll space-y-4">
+        <span class="text-xs font-mono uppercase tracking-widest text-[#C3B0AA]">04 / Contact</span>
+        <h2 class="title-60-bold text-[#1A1818]">Let's Work <br /><span class="text-[#C3B0AA]">Together.</span></h2>
+        <p class="text-sm text-[#7A7573]">期待与优秀的团队共同打造极致的交互与动态体验。</p>
+      </div>
+      <div class="reveal-on-scroll space-y-6 w-full md:w-auto">
+        <div class="p-6 rounded-2xl bg-[#F8F5F4] border border-[#D4BFB4]/30 flex items-center justify-between gap-8">
+          <div>
+            <div class="text-xs text-[#7A7573]">Direct Email</div>
+            <div class="text-lg font-bold text-[#1A1818] font-mono">designer@motion.com</div>
+          </div>
+          <button onclick="copyEmail('designer@motion.com')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-white border border-[#D4BFB4]/40 hover:bg-[#C3B0AA] hover:text-white transition-all duration-300">
+            复制邮箱
+          </button>
+        </div>
+        <div class="flex items-center gap-6 text-sm text-[#7A7573]">
+          <span>微信: Motion_Designer_2026</span>
+          <span>•</span>
+          <span>城市: 深圳 / 杭州 / 远程</span>
+        </div>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-[#D4BFB4]/20 flex flex-col sm:flex-row justify-between items-center text-xs text-[#7A7573] gap-4">
+      <div>© 2026 Senior Motion Designer. All Rights Reserved.</div>
+      <div class="flex gap-6">
+        <a href="#hero" class="hover:text-[#C3B0AA] transition-colors">返回顶部 ↑</a>
+      </div>
+    </div>
+  </footer>
+  <div id="toast" class="fixed bottom-8 right-8 z-50 px-5 py-3 rounded-2xl bg-[#1A1818] text-white text-xs shadow-2xl opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 border border-[#C3B0AA]/40">
+    邮箱地址已复制到剪贴板！
+  </div>
+  <script>
+    /* =========================================================
+       1. HERO VIDEO MOUSE SCRUBBING LOGIC
+       ========================================================= */
+    const video = document.getElementById('bgVideo');
+    const tip = document.getElementById('tip');
+    const tipText = document.getElementById('tipText');
+    const tipStatusDot = document.getElementById('tipStatusDot');
+    const fallbackCanvas = document.getElementById('fallbackCanvas');
+    const sensitivity = 0.8;
+    let lastX = null;
+    let isSeeking = false;
+    let useFallbackCanvas = false;
+    video.addEventListener('seeked', () => {
+      isSeeking = false;
+    });
+    video.addEventListener('loadedmetadata', () => {
+      tipStatusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+      tipText.innerText = "✅ 视频就绪｜鼠标左右移动控制视角";
+      video.pause();
+      video.currentTime = 0;
+    });
+    video.addEventListener('error', () => {
+      useFallbackCanvas = true;
+      video.classList.add('hidden');
+      fallbackCanvas.classList.remove('hidden');
+      tipStatusDot.className = "w-2 h-2 rounded-full bg-[#C3B0AA]";
+      tipText.innerText = "✨ 交互动效模式就绪｜滑动鼠标测试";
+      initFallback3DCanvas();
+    });
+    document.addEventListener('mousemove', (e) => {
+      if (useFallbackCanvas) {
+        updateFallbackCanvas(e.clientX);
+        return;
+      }
+      if (!video.duration) return;
+      if (lastX === null) {
+        lastX = e.clientX;
+        return;
+      }
+      const deltaX = e.clientX - lastX;
+      lastX = e.clientX;
+      const timeDelta = (deltaX * sensitivity) / 100;
+      if (isSeeking) return;
+      isSeeking = true;
+      let newTime = video.currentTime + timeDelta;
+      newTime = Math.max(0, Math.min(video.duration, newTime));
+      video.currentTime = newTime;
+    });
+    document.addEventListener('mouseleave', () => {
+      lastX = null;
+    });
+    /* =========================================================
+       2. CANVAS FALLBACK GENERATOR
+       ========================================================= */
+    let fbCtx, fbW, fbH;
+    let headRotation = 0;
+    function initFallback3DCanvas() {
+      fbCtx = fallbackCanvas.getContext('2d');
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      drawFallbackScene();
+    }
+    function resizeCanvas() {
+      if (!fallbackCanvas) return;
+      fbW = fallbackCanvas.width = fallbackCanvas.clientWidth || window.innerWidth;
+      fbH = fallbackCanvas.height = fallbackCanvas.clientHeight || window.innerHeight;
+      drawFallbackScene();
+    }
+    function updateFallbackCanvas(clientX) {
+      headRotation = (clientX / window.innerWidth - 0.5) * 2;
+      drawFallbackScene();
+    }
+    function drawFallbackScene() {
+      if (!fbCtx) return;
+      fbCtx.clearRect(0, 0, fbW, fbH);
+      const grad = fbCtx.createRadialGradient(fbW/2, fbH/2, 50, fbW/2, fbH/2, fbW);
+      grad.addColorStop(0, '#2A2625');
+      grad.addColorStop(1, '#0F0E0E');
+      fbCtx.fillStyle = grad;
+      fbCtx.fillRect(0, 0, fbW, fbH);
+      fbCtx.save();
+      fbCtx.translate(fbW / 2 + headRotation * 80, fbH / 2);
+      fbCtx.beginPath();
+      fbCtx.arc(0, -20, 180, 0, Math.PI * 2);
+      fbCtx.fillStyle = 'rgba(195, 176, 170, 0.15)';
+      fbCtx.fill();
+      fbCtx.beginPath();
+      fbCtx.arc(0, -30, 120, 0, Math.PI * 2);
+      fbCtx.fillStyle = '#D4BFB4';
+      fbCtx.shadowColor = '#C3B0AA';
+      fbCtx.shadowBlur = 30;
+      fbCtx.fill();
+      fbCtx.fillStyle = '#1A1818';
+      fbCtx.beginPath();
+      fbCtx.arc(headRotation * 40 - 30, -40, 10, 0, Math.PI * 2);
+      fbCtx.arc(headRotation * 40 + 30, -40, 10, 0, Math.PI * 2);
+      fbCtx.fill();
+      fbCtx.strokeStyle = 'rgba(26, 24, 24, 0.2)';
+      fbCtx.lineWidth = 2;
+      for (let i = -100; i <= 100; i += 25) {
+        fbCtx.beginPath();
+        fbCtx.ellipse(headRotation * 20, i - 30, Math.abs(120 - Math.abs(i) * 0.8), 20, 0, 0, Math.PI * 2);
+        fbCtx.stroke();
+      }
+      fbCtx.restore();
+    }
+    /* =========================================================
+       3. SCROLL ANIMATIONS ——双向进出动画
+       ========================================================= */
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -80px 0px',
+      threshold: 0.1
+    };
+    const scrollObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        } else {
+          entry.target.classList.remove('is-visible');
+        }
+      });
+    }, observerOptions);
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+      scrollObserver.observe(el);
+    });
+    /* =========================================================
+       4. SHOWCASE CANVAS ANIMATIONS
+       ========================================================= */
+    function initShowcaseCanvas1() {
+      const cvs = document.getElementById('showcaseCanvas1');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      let t = 0;
+      function render() {
+        cvs.width = cvs.clientWidth;
+        cvs.height = cvs.clientHeight;
+        const w = cvs.width;
+        const h = cvs.height;
+        ctx.clearRect(0, 0, w, h);
+        t += 0.03;
+        ctx.beginPath();
+        ctx.moveTo(40, h / 2);
+        for (let x = 40; x < w - 40; x += 5) {
+          const progress = (x - 40) / (w - 80);
+          const damping = Math.exp(-progress * 3);
+          const y = h / 2 + Math.sin(progress * 12 - t * 2) * 60 * damping;
+          ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = '#D4BFB4';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        const springX = w * 0.4;
+        const springY = h / 2 + Math.sin(0.4 * 12 - t * 2) * 60 * Math.exp(-0.4 * 3);
+        ctx.beginPath();
+        ctx.arc(springX, springY, 12, 0, Math.PI * 2);
+        ctx.fillStyle = '#C3B0AA';
+        ctx.shadowColor = '#C3B0AA';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+    function initShowcaseCanvas2() {
+      const cvs = document.getElementById('showcaseCanvas2');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      let t = 0;
+      function render() {
+        cvs.width = cvs.clientWidth;
+        cvs.height = cvs.clientHeight;
+        const w = cvs.width;
+        const h = cvs.height;
+        ctx.clearRect(0, 0, w, h);
+        t += 0.02;
+        const cardWidth = 140 + Math.sin(t) * 20;
+        const cardHeight = 90 + Math.sin(t) * 15;
+        const centerX = w / 2;
+        const centerY = h / 2;
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.fillStyle = 'rgba(212, 191, 180, 0.15)';
+        ctx.strokeStyle = '#C3B0AA';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 16);
+        ctx.fill();
+        ctx.stroke();
+        const rippleR = ((t * 40) % 120);
+        ctx.beginPath();
+        ctx.arc(0, 0, rippleR, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(195, 176, 170, ${1 - rippleR / 120})`;
+        ctx.stroke();
+        ctx.restore();
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+    /* 作品3画布 */
+    function initShowcaseCanvas3() {
+      const cvs = document.getElementById('showcaseCanvas3');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      let t = 0;
+      function render() {
+        cvs.width = cvs.clientWidth;
+        cvs.height = cvs.clientHeight;
+        const w = cvs.width;
+        const h = cvs.height;
+        ctx.clearRect(0, 0, w, h);
+        t += 0.025;
+        for (let i = 0; i < 5; i++) {
+          const x = w * (0.2 + i * 0.15);
+          const y = h / 2 + Math.sin(t + i) * 40;
+          const r = 10 + Math.sin(t * 1.5 + i) * 4;
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fillStyle = i % 2 === 0 ? '#C3B0AA' : '#D4BFB4';
+          ctx.shadowColor = '#C3B0AA';
+          ctx.shadowBlur = 12;
+          ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.moveTo(0, h / 2);
+        ctx.bezierCurveTo(w * 0.25, h / 2 - 60, w * 0.75, h / 2 + 60, w, h / 2);
+        ctx.strokeStyle = 'rgba(212, 191, 180, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+    /* 作品4画布 */
+    function initShowcaseCanvas4() {
+      const cvs = document.getElementById('showcaseCanvas4');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      let t = 0;
+      function render() {
+        cvs.width = cvs.clientWidth;
+        cvs.height = cvs.clientHeight;
+        const w = cvs.width;
+        const h = cvs.height;
+        ctx.clearRect(0, 0, w, h);
+        t += 0.02;
+        const cx = w / 2;
+        const cy = h / 2;
+        const baseR = Math.min(w, h) * 0.25;
+        for (let i = 0; i < 3; i++) {
+          ctx.beginPath();
+          ctx.arc(cx, cy, baseR + i * 30 + Math.sin(t + i) * 8, 0, Math.PI * 2);
+          ctx.strokeStyle = i === 0 ? '#C3B0AA' : i === 1 ? '#D4BFB4' : 'rgba(212, 191, 180, 0.35)';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(t * 0.3);
+        ctx.fillStyle = '#C3B0AA';
+        ctx.shadowColor = '#C3B0AA';
+        ctx.shadowBlur = 20;
+        ctx.fillRect(-18, -18, 36, 36);
+        ctx.restore();
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+    /* 作品5画布：品牌动态图形 */
+    function initShowcaseCanvas5() {
+      const cvs = document.getElementById('showcaseCanvas5');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      let t = 0;
+      function render() {
+        cvs.width = cvs.clientWidth;
+        cvs.height = cvs.clientHeight;
+        const w = cvs.width;
+        const h = cvs.height;
+        ctx.clearRect(0, 0, w, h);
+        t += 0.022;
+
+        const cx = w / 2;
+        const cy = h / 2;
+        const baseR = Math.min(w, h) * 0.18;
+
+        for (let i = 0; i < 3; i++) {
+          ctx.beginPath();
+          ctx.arc(cx, cy, baseR + i * 28 + Math.sin(t + i) * 6, 0, Math.PI * 2);
+          ctx.strokeStyle = i === 0 ? '#C3B0AA' : i === 1 ? '#D4BFB4' : 'rgba(212, 191, 180, 0.35)';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(t * 0.4);
+        ctx.fillStyle = '#C3B0AA';
+        ctx.shadowColor = '#C3B0AA';
+        ctx.shadowBlur = 18;
+        ctx.fillRect(-14, -14, 28, 28);
+        ctx.restore();
+
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+
+    /* 作品6画布：实验动效短片 */
+    function initShowcaseCanvas6() {
+      const cvs = document.getElementById('showcaseCanvas6');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      let t = 0;
+      function render() {
+        cvs.width = cvs.clientWidth;
+        cvs.height = cvs.clientHeight;
+        const w = cvs.width;
+        const h = cvs.height;
+        ctx.clearRect(0, 0, w, h);
+        t += 0.018;
+
+        for (let i = 0; i < 8; i++) {
+          const progress = (i / 8 + t * 0.08) % 1;
+          const x = progress * w;
+          const y = h / 2 + Math.sin(progress * Math.PI * 5 + i) * 45;
+          const size = 5 + Math.sin(t * 2 + i) * 2.5;
+
+          ctx.beginPath();
+          ctx.arc(x, y, size, 0, Math.PI * 2);
+          ctx.fillStyle = i % 2 === 0 ? '#C3B0AA' : '#D4BFB4';
+          ctx.shadowColor = '#C3B0AA';
+          ctx.shadowBlur = 10;
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(0, h * 0.32);
+        ctx.quadraticCurveTo(w * 0.5, h * 0.12, w, h * 0.32);
+        ctx.strokeStyle = 'rgba(212, 191, 180, 0.45)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, h * 0.68);
+        ctx.quadraticCurveTo(w * 0.5, h * 0.88, w, h * 0.68);
+        ctx.stroke();
+
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+
+    /* Reel画布 */
+    function initReelCanvas() {
+      const cvs = document.getElementById('reelCanvas');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      let t = 0;
+      function render() {
+        cvs.width = cvs.clientWidth;
+        cvs.height = cvs.clientHeight;
+        const w = cvs.width;
+        const h = cvs.height;
+        ctx.clearRect(0, 0, w, h);
+        t += 0.018;
+        for (let i = 0; i < 6; i++) {
+          const progress = (i / 6 + t * 0.1) % 1;
+          const x = progress * w;
+          const y = h / 2 + Math.sin(progress * Math.PI * 6 + i) * 50;
+          const size = 6 + Math.sin(t * 2 + i) * 3;
+          ctx.beginPath();
+          ctx.arc(x, y, size, 0, Math.PI * 2);
+          ctx.fillStyle = i % 2 === 0 ? '#C3B0AA' : '#D4BFB4';
+          ctx.shadowColor = '#C3B0AA';
+          ctx.shadowBlur = 10;
+          ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.moveTo(0, h * 0.3);
+        ctx.quadraticCurveTo(w * 0.5, h * 0.1, w, h * 0.3);
+        ctx.strokeStyle = 'rgba(212, 191, 180, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, h * 0.7);
+        ctx.quadraticCurveTo(w * 0.5, h * 0.9, w, h * 0.7);
+        ctx.stroke();
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+    window.addEventListener('load', () => {
+      initShowcaseCanvas1();
+      initShowcaseCanvas2();
+      initShowcaseCanvas3();
+      initShowcaseCanvas4();
+      initShowcaseCanvas5();
+      initShowcaseCanvas6();
+      initReelCanvas();
+    });
+    /* =========================================================
+       5. UTILITY FUNCTIONS
+       ========================================================= */
+    function copyEmail(email) {
+      const textInput = document.createElement('input');
+      textInput.value = email;
+      document.body.appendChild(textInput);
+      textInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(textInput);
+      const toast = document.getElementById('toast');
+      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
