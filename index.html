@@ -136,7 +136,7 @@
   <!-- Hero -->
   <section id="hero" class="relative w-full min-h-[420px] h-screen overflow-hidden flex items-center justify-center bg-black">
     <div class="relative w-full h-full">
-      <video id="heroVideoEl" class="absolute inset-0 w-full h-full object-contain md:object-cover pointer-events-none" preload="metadata" muted loop playsinline>
+      <video id="heroVideoEl" class="absolute inset-0 w-full h-full object-contain md:object-cover pointer-events-none" preload="auto" muted loop playsinline>
         <source src="head_turn.mp4" type="video/mp4">
       </video>
       <canvas id="fallbackCanvas" class="absolute inset-0 w-full h-full object-contain md:object-cover hidden pointer-events-none"></canvas>
@@ -145,15 +145,15 @@
         <span id="tipStatusDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
         <span id="tipText">视频加载中...</span>
       </div>
-      <!-- 左下角文案 -->
+      <!-- 左下角文案｜宋弈雪 UI/UX交互动效设计师 -->
       <div class="hero-text-wrap">
         <div class="space-y-2 md:space-y-3">
           <div class="inline-block px-3 py-1 tag-text font-semibold tracking-widest text-[#1A1818] uppercase bg-[#D4BFB4]/40 backdrop-blur-md border border-[#C3B0AA]/30 rounded-full">
             Senior Motion Designer
           </div>
           <h1 class="hero-main-title drop-shadow-[0_2px_10px_rgba(0,0,0,0.22)]">
-            <span class="text-[#1A1818]">系统级 UI/UX 交互动效</span><br />
-            <span class="text-[#C3B0AA] font-bold">& 动态视觉设计师</span>
+            <span class="text-[#1A1818] font-bold">宋弈雪</span><br />
+            <span class="text-[#C3B0AA]">UI/UX交互动效设计师</span>
           </h1>
           <p class="hero-desc-text font-light drop-shadow-[0_2px_10px_rgba(0,0,0,0.22)]">
             <span class="font-bold text-[#1A1818]">8 年动效设计经验</span> · OPPO Color OS 研发团队背景
@@ -432,7 +432,7 @@
   </div>
   <script>
     /* =========================================================
-       1. HERO VIDEO MOUSE SCRUBBING LOGIC【修复跳帧、回弹】
+       1. HERO VIDEO MOUSE SCRUBBING｜深度防卡顿优化版本
     ========================================================= */
     const heroVideoEl = document.getElementById('heroVideoEl');
     const tip = document.getElementById('tip');
@@ -440,18 +440,25 @@
     const tipStatusDot = document.getElementById('tipStatusDot');
     const fallbackCanvas = document.getElementById('fallbackCanvas');
 
+    // ---------------- 调参区 ----------------
+    const EASE_SMOOTH = 0.068;      // 整体缓动系数，越大响应越快
+    const SEEK_THRESHOLD = 0.022;   // 时间差阈值，小于该值不去seek视频（关键，减少seek调用）
+    const SENSITIVITY = 1.0;
+    // ----------------------------------------
+
     let useFallbackCanvas = false;
-    let targetTime = 0;
-    let currentScrubTime = 0;
     let isVideoReady = false;
     let rafId = null;
+
+    let rawNorm = 0;          // 原始鼠标归一化值 0~1
+    let smoothNorm = 0;       // JS内存平滑后的归一化值
 
     heroVideoEl.addEventListener('loadedmetadata', () => {
       tipStatusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
       tipText.innerText = "✅ 视频就绪｜鼠标左右移动控制视角";
       heroVideoEl.pause();
-      targetTime = 0;
-      currentScrubTime = 0;
+      rawNorm = 0;
+      smoothNorm = 0;
       heroVideoEl.currentTime = 0;
       isVideoReady = true;
     });
@@ -465,46 +472,50 @@
       initFallback3DCanvas();
     });
 
+    // 鼠标输入
     document.addEventListener('mousemove', (e) => {
       if (useFallbackCanvas) {
         updateFallbackCanvas(e.clientX);
         return;
       }
       if (!isVideoReady || !heroVideoEl.duration) return;
-
-      const mouseXNormalized = e.clientX / window.innerWidth;
-      targetTime = mouseXNormalized * heroVideoEl.duration;
-      targetTime = Math.max(0, Math.min(heroVideoEl.duration, targetTime));
-
-      if (!rafId) {
-        rafId = requestAnimationFrame(scrubLoop);
-      }
+      rawNorm = Math.max(0, Math.min(1, (e.clientX / window.innerWidth) * SENSITIVITY));
+      if (!rafId) rafId = requestAnimationFrame(renderLoop);
     });
 
-    // 触屏支持
+    // 触屏输入
     document.addEventListener('touchmove', (e) => {
       const touch = e.touches[0];
-      const mockMouseEvent = new MouseEvent('mousemove', { clientX: touch.clientX });
-      document.dispatchEvent(mockMouseEvent);
+      if (useFallbackCanvas) {
+        updateFallbackCanvas(touch.clientX);
+        return;
+      }
+      if (!isVideoReady || !heroVideoEl.duration) return;
+      rawNorm = Math.max(0, Math.min(1, (touch.clientX / window.innerWidth) * SENSITIVITY));
+      if (!rafId) rafId = requestAnimationFrame(renderLoop);
     }, { passive: true });
 
-    function scrubLoop() {
+    function renderLoop() {
       if (!isVideoReady || useFallbackCanvas) {
         rafId = null;
         return;
       }
-      const easeFactor = 0.08;
-      currentScrubTime += (targetTime - currentScrubTime) * easeFactor;
+      // JS内存高阶缓动
+      smoothNorm += (rawNorm - smoothNorm) * EASE_SMOOTH;
+      const targetSec = smoothNorm * heroVideoEl.duration;
 
-      if (Math.abs(heroVideoEl.currentTime - currentScrubTime) > 0.015) {
-        heroVideoEl.currentTime = currentScrubTime;
+      // 只有差值超过阈值，才真正操作video.currentTime，避免疯狂seek
+      const diff = Math.abs(heroVideoEl.currentTime - targetSec);
+      if (diff > SEEK_THRESHOLD) {
+        heroVideoEl.currentTime = targetSec;
       }
 
-      if (Math.abs(targetTime - currentScrubTime) < 0.005) {
+      // 接近目标停止循环，释放CPU
+      if (Math.abs(rawNorm - smoothNorm) < 0.001) {
         rafId = null;
         return;
       }
-      rafId = requestAnimationFrame(scrubLoop);
+      rafId = requestAnimationFrame(renderLoop);
     }
 
     window.addEventListener('beforeunload', () => {
