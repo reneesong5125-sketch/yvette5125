@@ -14,6 +14,9 @@
     tailwind.config = {
       theme: {
         extend: {
+          fontSize: {
+            '48-regular': '3rem'
+          },
           colors: {
             brand: {
               primary: '#C3B0AA',
@@ -45,7 +48,6 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #C3B0AA;
     }
-
     /* Hero 左下角文案容器 */
     .hero-text-wrap {
       position: absolute;
@@ -56,7 +58,6 @@
       pointer-events: none;
       z-index: 10;
     }
-
     .tag-text {
       font-size: clamp(10px, 1.1vw, 13px);
     }
@@ -72,25 +73,32 @@
       font-size: clamp(11px, 1vw, 13px);
     }
 
-    /* 滚动双向动画 */
+    /* ========== 滚动入场退场动画｜不同属性不同贝塞尔曲线 ========== */
     .reveal-on-scroll {
       opacity: 0;
-      transform: translateY(80px);
-      transition: opacity 320ms ease, transform 320ms ease;
+      transform: translateY(10px);
+      /* 退场：opacity 200ms cubic‑bezier(0.33,0,0.67,1)｜transform 200ms cubic‑bezier(0.3,0,0.1,1) */
+      transition:
+        opacity 200ms cubic-bezier(0.33, 0, 0.67, 1),
+        transform 200ms cubic-bezier(0.3, 0, 0.1, 1);
       will-change: opacity, transform;
     }
+
     .reveal-on-scroll.is-visible {
       opacity: 1;
       transform: translateY(0);
+      /* 入场：opacity 300ms cubic‑bezier(0.33,0,0.67,1)｜transform 300ms cubic‑bezier(0.3,0,0.1,1) */
+      transition:
+        opacity 300ms cubic-bezier(0.33, 0, 0.67, 1),
+        transform 300ms cubic-bezier(0.3, 0, 0.1, 1);
+      transform: translateY(0);
     }
 
-    /* Glass Panel */
     .glass-panel {
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(212, 191, 180, 0.3);
     }
-
     /* 去掉作品视频位黑边黑底 */
     .work-video-card {
       background-color: transparent !important;
@@ -125,7 +133,6 @@
       </a>
     </div>
   </header>
-
   <!-- Hero -->
   <section id="hero" class="relative w-full min-h-[420px] h-screen overflow-hidden flex items-center justify-center bg-black">
     <div class="relative w-full h-full">
@@ -138,7 +145,6 @@
         <span id="tipStatusDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
         <span id="tipText">视频加载中...</span>
       </div>
-
       <!-- 左下角文案 -->
       <div class="hero-text-wrap">
         <div class="space-y-2 md:space-y-3">
@@ -160,7 +166,6 @@
       </div>
     </div>
   </section>
-
   <!-- About -->
   <section id="about" class="py-28 px-6 max-w-7xl mx-auto">
     <div class="reveal-on-scroll mb-20 border-b border-[#D4BFB4]/30 pb-8">
@@ -214,7 +219,6 @@
       </div>
     </div>
   </section>
-
   <!-- UX系统动效 -->
   <section id="showcase" class="py-28 px-6 bg-[#F8F5F4]/50 border-t border-b border-[#D4BFB4]/20">
     <div class="max-w-7xl mx-auto">
@@ -227,7 +231,6 @@
           精选系统级交互动效、物理反馈、多态组件与品牌动态视觉案例。
         </p>
       </div>
-
       <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <!-- 作品1 -->
         <div class="reveal-on-scroll group work-video-card">
@@ -250,7 +253,6 @@
             </div>
           </div>
         </div>
-
         <!-- 作品2 -->
         <div class="reveal-on-scroll group work-video-card">
           <div class="video-frame rounded-3xl overflow-hidden border border-[#D4BFB4]/40 aspect-video relative">
@@ -272,7 +274,6 @@
             </div>
           </div>
         </div>
-
         <!-- 作品3 -->
         <div class="reveal-on-scroll group work-video-card">
           <div class="video-frame rounded-3xl overflow-hidden border border-[#D4BFB4]/40 aspect-video relative">
@@ -294,7 +295,6 @@
             </div>
           </div>
         </div>
-
         <!-- 作品4 -->
         <div class="reveal-on-scroll group work-video-card">
           <div class="video-frame rounded-3xl overflow-hidden border border-[#D4BFB4]/40 aspect-video relative">
@@ -317,7 +317,6 @@
           </div>
         </div>
       </div>
-
       <!-- MG / 其它 -->
       <div class="mt-24 md:mt-32">
         <div class="reveal-on-scroll mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#D4BFB4]/30 pb-8">
@@ -326,7 +325,6 @@
             <h2 class="text-48-regular text-[#1A1818] mt-2">MG / 其它</h2>
           </div>
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
           <!-- 作品5 -->
           <div class="reveal-on-scroll group work-video-card">
@@ -349,7 +347,6 @@
               </div>
             </div>
           </div>
-
           <!-- 作品6：INS投流动效制作 -->
           <div class="reveal-on-scroll group work-video-card">
             <div class="video-frame rounded-3xl overflow-hidden border border-[#D4BFB4]/40 aspect-video relative">
@@ -375,7 +372,6 @@
       </div>
     </div>
   </section>
-
   <!-- 动效集锦 -->
   <section id="motion-reel" class="py-28 px-6 bg-white border-t border-[#D4BFB4]/20">
     <div class="max-w-7xl mx-auto">
@@ -385,13 +381,11 @@
           <h2 class="text-48-regular text-[#1A1818] mt-2">动效集锦</h2>
         </div>
       </div>
-
       <div class="reveal-on-scroll rounded-3xl overflow-hidden border border-[#D4BFB4]/40 aspect-video relative work-video-card">
         <video class="absolute inset-0 w-full h-full object-cover" muted loop playsinline controls>
           <source src="video1.mp4" type="video/mp4">
         </video>
       </div>
-
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
         <div class="reveal-on-scroll p-6 rounded-3xl border border-[#D4BFB4]/30 bg-[#F8F5F4]/60 hover:border-[#C3B0AA] transition-all duration-300">
           <div class="text-xs font-mono text-[#C3B0AA] mb-2">Reel 01</div>
@@ -401,13 +395,12 @@
       </div>
     </div>
   </section>
-
   <!-- Footer -->
   <footer id="contact" class="py-24 px-6 bg-white border-t border-[#D4BFB4]/30">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
       <div class="reveal-on-scroll space-y-4">
         <span class="text-xs font-mono uppercase tracking-widest text-[#C3B0AA]">04 / Contact</span>
-        <h2 class="title-60-bold text-[#1A1818]">Let's Work <br /><span class="text-[#C3B0AA]">Together.</span></h2>
+        <h2 class="text-48-regular text-[#1A1818]">Let's Work <br /><span class="text-[#C3B0AA]">Together.</span></h2>
         <p class="text-sm text-[#7A7573]">期待与优秀的团队共同打造极致的交互与动态体验。</p>
       </div>
       <div class="reveal-on-scroll space-y-6 w-full md:w-auto">
@@ -434,34 +427,35 @@
       </div>
     </div>
   </footer>
-
   <div id="toast" class="fixed bottom-8 right-8 z-50 px-5 py-3 rounded-2xl bg-[#1A1818] text-white text-xs shadow-2xl opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 border border-[#C3B0AA]/40">
     邮箱地址已复制到剪贴板！
   </div>
-
   <script>
     /* =========================================================
-       1. HERO VIDEO MOUSE SCRUBBING LOGIC
-       ========================================================= */
+       1. HERO VIDEO MOUSE SCRUBBING LOGIC【修复跳帧、回弹】
+    ========================================================= */
     const heroVideoEl = document.getElementById('heroVideoEl');
     const tip = document.getElementById('tip');
     const tipText = document.getElementById('tipText');
     const tipStatusDot = document.getElementById('tipStatusDot');
     const fallbackCanvas = document.getElementById('fallbackCanvas');
-    const sensitivity = 0.8;
-    let lastX = null;
-    let isSeeking = false;
-    let useFallbackCanvas = false;
 
-    heroVideoEl.addEventListener('seeked', () => {
-      isSeeking = false;
-    });
+    let useFallbackCanvas = false;
+    let targetTime = 0;
+    let currentScrubTime = 0;
+    let isVideoReady = false;
+    let rafId = null;
+
     heroVideoEl.addEventListener('loadedmetadata', () => {
       tipStatusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
       tipText.innerText = "✅ 视频就绪｜鼠标左右移动控制视角";
       heroVideoEl.pause();
+      targetTime = 0;
+      currentScrubTime = 0;
       heroVideoEl.currentTime = 0;
+      isVideoReady = true;
     });
+
     heroVideoEl.addEventListener('error', () => {
       useFallbackCanvas = true;
       heroVideoEl.classList.add('hidden');
@@ -470,32 +464,56 @@
       tipText.innerText = "✨ 交互动效模式就绪｜滑动鼠标测试";
       initFallback3DCanvas();
     });
+
     document.addEventListener('mousemove', (e) => {
       if (useFallbackCanvas) {
         updateFallbackCanvas(e.clientX);
         return;
       }
-      if (!heroVideoEl.duration) return;
-      if (lastX === null) {
-        lastX = e.clientX;
+      if (!isVideoReady || !heroVideoEl.duration) return;
+
+      const mouseXNormalized = e.clientX / window.innerWidth;
+      targetTime = mouseXNormalized * heroVideoEl.duration;
+      targetTime = Math.max(0, Math.min(heroVideoEl.duration, targetTime));
+
+      if (!rafId) {
+        rafId = requestAnimationFrame(scrubLoop);
+      }
+    });
+
+    // 触屏支持
+    document.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      const mockMouseEvent = new MouseEvent('mousemove', { clientX: touch.clientX });
+      document.dispatchEvent(mockMouseEvent);
+    }, { passive: true });
+
+    function scrubLoop() {
+      if (!isVideoReady || useFallbackCanvas) {
+        rafId = null;
         return;
       }
-      const deltaX = e.clientX - lastX;
-      lastX = e.clientX;
-      const timeDelta = (deltaX * sensitivity) / 100;
-      if (isSeeking) return;
-      isSeeking = true;
-      let newTime = heroVideoEl.currentTime + timeDelta;
-      newTime = Math.max(0, Math.min(heroVideoEl.duration, newTime));
-      heroVideoEl.currentTime = newTime;
-    });
-    document.addEventListener('mouseleave', () => {
-      lastX = null;
+      const easeFactor = 0.08;
+      currentScrubTime += (targetTime - currentScrubTime) * easeFactor;
+
+      if (Math.abs(heroVideoEl.currentTime - currentScrubTime) > 0.015) {
+        heroVideoEl.currentTime = currentScrubTime;
+      }
+
+      if (Math.abs(targetTime - currentScrubTime) < 0.005) {
+        rafId = null;
+        return;
+      }
+      rafId = requestAnimationFrame(scrubLoop);
+    }
+
+    window.addEventListener('beforeunload', () => {
+      if (rafId) cancelAnimationFrame(rafId);
     });
 
     /* =========================================================
        2. CANVAS FALLBACK GENERATOR
-       ========================================================= */
+    ========================================================= */
     let fbCtx, fbW, fbH;
     let headRotation = 0;
     function initFallback3DCanvas() {
@@ -551,7 +569,7 @@
 
     /* =========================================================
        3. SCROLL ANIMATIONS
-       ========================================================= */
+    ========================================================= */
     const observerOptions = {
       root: null,
       rootMargin: '0px 0px -80px 0px',
@@ -572,7 +590,7 @@
 
     /* =========================================================
        UTILITY FUNCTIONS
-       ========================================================= */
+    ========================================================= */
     function copyEmail(email) {
       const textInput = document.createElement('input');
       textInput.value = email;
